@@ -4,18 +4,25 @@ set -e
 sudo apt update -y
 sudo apt install -y build-essential gcc g++ make libncurses-dev bison flex libssl-dev libelf-dev bc autoconf automake libtool git qemu-system-x86 cpio gzip
 
-git clone https://github.com/torvalds/linux
-git clone https://github.com/bminor/glibc
-git clone https://github.com/mirror/busybox
+git clone https://github.com/torvalds/linux --depth 1
+git clone https://github.com/bminor/glibc --depth 1
+git clone https://github.com/mirror/busybox --depth 1
 
 # Create a directory for the initial ramdisk
 rm -rf initramfs/*
-mkdir -p initramfs/{proc,sys,tmp,lib,dev,etc/network,usr/share/udhcpc}
+mkdir -p initramfs/proc
+mkdir -p sys
+mkdir -p tmp
+mkdir -p lib
+mkdir -p dev
+mkdir -p etc/network
+mkdir -p usr/share/udhcpc
 
 # Step 1: Compile Linux Kernel
 echo "Compiling Linux Kernel..."
 cd ./linux
     make defconfig
+    pause
     make -j$(nproc) bzImage
 cd ..
 
@@ -33,6 +40,7 @@ cd ..
 echo "Compiling BusyBox..."
 cd ./busybox
     make defconfig
+    pause
     make -j$(nproc)
     make install
 cd ..
